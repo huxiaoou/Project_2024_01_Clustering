@@ -1,4 +1,6 @@
 import os
+
+import numpy as np
 import pandas as pd
 from sklearn.cluster import KMeans
 from sklearn.metrics import silhouette_score
@@ -21,7 +23,8 @@ class CDataReader(object):
         return df.fillna(fillna_value)
 
 
-def optimize_k_and_labels(data: pd.DataFrame, range_k: range, range_rs: range, verbose: bool = False) -> tuple[int, pd.Series]:
+def optimize_k_and_labels(data: pd.DataFrame, range_k: range, range_rs: range, verbose: bool = False) -> tuple[
+    int, pd.Series]:
     silh_scores: dict[tuple[int, int], float] = {}
     labels: dict[tuple[int, int], pd.Series] = {}
     for k in range_k:
@@ -40,3 +43,9 @@ def optimize_k_and_labels(data: pd.DataFrame, range_k: range, range_rs: range, v
     print(f"best K, Random State  = {k}, {rs}")
     print("=" * 24)
     return k, labels[k, rs]
+
+
+def optimize_with_center(data: pd.DataFrame, centers: pd.DataFrame) -> np.ndarray:
+    k = len(centers)
+    s = KMeans(n_clusters=k, init=centers, random_state=0).fit_predict(data)
+    return s
